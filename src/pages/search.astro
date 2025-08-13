@@ -1,6 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro"
-const fetchUrl = new URL("/api/movies.json", Astro.url.origin)
+const fetchUrl = new URL("/moviees/api/movies.json", Astro.url.origin)
 const metaTitle = "Buscar Película - MovieEs"
 const metaDesc = "Busca una película en específico de nuestro catálogo y descargala completamente gratis desde Telegram"
 ---
@@ -90,7 +90,7 @@ const metaDesc = "Busca una película en específico de nuestro catálogo y desc
     if (filteredMovies.length === 0) {
       resultsContainer.innerHTML = `
         <div class="flex justify-center items-center w-full p-8">
-          <p class="bg-title text-xl text-center">No se ha encontrado ninguna película coincidente con su búsqueda.</p>
+          <p class="text-title text-xl text-center">No se ha encontrado ninguna película coincidente con su búsqueda.</p>
         </div>`
       return
     }
