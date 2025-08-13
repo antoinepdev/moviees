@@ -1,0 +1,25 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import Card from '@/components/ui/Card.astro'
+import { getCollection } from "astro:content"
+
+export async function getStaticPaths() {
+  const movies = await getCollection("movies")
+  return movies.map(m => {
+    return {
+      params: {page : m.data.id},
+      props: {movie: m}
+    }
+    
+  });
+}
+
+
+const {movie} = Astro.props
+ const {title} = movie.data
+---
+<Layout title={`Descargar ${title} en español`} desc={`Descarga ${title} en español completamente gratis`}>
+  <main class="mt-secondary">
+    <Card movie={movie.data}/>
+  </main> 
+</Layout>

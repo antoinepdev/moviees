@@ -1,0 +1,25 @@
+---
+import Card from "@/components/ui/Card.astro"
+const {movies} = Astro.props
+---
+ <section
+  class="movie__grid"
+  role="region"
+  aria-label="Listado de películas"
+>
+  {movies.map(movie => (
+    <Card movie={movie.data}/> 
+  ))} 
+</section>
+
+<style>
+  .movie__grid {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(260px, 1fr)
+    );
+    gap: 16px;
+  }
+ </style>

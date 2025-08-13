@@ -1,0 +1,17 @@
+---
+const {movie} = Astro.props
+const {title, img, url} = movie
+---
+<article class="bg-secondary rounded p-primary flex flex-col gap-primary">
+  <img
+    src={img}
+    class="h-80 w-full object-cover rounded"
+    loading="lazy"
+    decoding="async"
+    alt={`Descargar ${title}`}
+  />
+  <h2 class="text-title text-center text-lg h-8 font-bold overflow-hidden">{title}</h2>
+  <p class="text-center">Idioma: Español</p>
+  <a href={url} class="bg-btn text-title text-center font-extrabold rounded p-primary">Descargar</a>
+
+</article>

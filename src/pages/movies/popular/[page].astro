@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '@/layouts/Layout.astro'
+import Grid from '@/components/Grid.astro'
+import Pagination from '@/components/Pagination.astro'
+
+export async function getStaticPaths ({paginate}) {
+  const m = await getCollection("movies")
+  const movies = m.filter(movie => movie.data.popular && movie.data.year != 2025)
+  movies.reverse()
+
+  return paginate(movies, {pageSize: 10})
+}
+
+const {page} = Astro.props
+const movies = page.data
+const metaTitle = "Películas 2025 - MovieEs"
+const metaDesc = "Descarga películas de estreno completamente gratis desde Telegram"
+---
+<Layout title={metaTitle} desc={metaDesc}>
+  <main class="mt-secondary">
+    <h1 class="mb-primary text-title text-2xl font-bold">Películas 2025</h1>
+    <Grid movies={movies}/>
+    <Pagination page={page} />
+  </main> 
+</Layout>

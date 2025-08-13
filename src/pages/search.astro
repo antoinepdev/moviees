@@ -1,0 +1,130 @@
+---
+import Layout from "@/layouts/Layout.astro"
+const fetchUrl = new URL("/api/movies.json", Astro.url.origin)
+const metaTitle = "Buscar Película - MovieEs"
+const metaDesc = "Busca una película en específico de nuestro catálogo y descargala completamente gratis desde Telegram"
+---
+
+<Layout title={metaTitle} desc={metaDesc}>
+  <main class="bg-primary mt-secondary">
+    <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-secondary md:gap-2">
+
+      <!-- Buscador -->
+      <div class="bg-secondary p-2 w-full md:order-2">
+        <label for="search" class="block text-title font-bold text-xl">Buscar película</label>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
+          <input
+            id="search"
+            type="text"
+            placeholder="Escribe un título..."
+            class="lg:col-span-2 px-4 py-2 my-2 rounded bg-secondary text-title border border-subtitle focus:outline-none focus:ring-2 focus:ring-btn"
+          />
+          <button
+            type="button"
+            id="searchBtn"
+            data-fetch-url={fetchUrl}
+            class="px-primary py-2 bg-btn text-title font-semibold rounded hover:opacity-90 transition"
+          >
+            Buscar
+          </button>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="w-full md:order-1 md:col-span-2">
+
+        <!-- Instrucciones -->
+        <div id="instructions" class="space-y-4 text-subtitle md:col-span-2 break-words">
+          <h2 class="text-title text-xl font-semibold">¿Cómo buscar películas eficientemente?</h2>
+          <ul class="ml-4 list-disc list-inside space-y-2 text-sm">
+            <li>No necesitas escribir el título completo.</li>
+            <li>Una sola palabra puede ser suficiente.</li>
+            <li>No es obligatorio escribir toda la palabra: un fragmento basta.</li>
+            <li>Los títulos deben escribirse en <strong class="text-title">inglés</strong>.</li>
+          </ul>
+        </div>  
+         
+        <!--Aquí se mostrará el grid de resultados cuando el usuario busque -->
+        <div id="result-area" class="movie__grid" hidden></div>
+
+      </div>
+    </div>
+  </main>
+
+</Layout>
+
+<style>
+  .movie__grid {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(160px, 1fr)
+    );
+    gap: 16px;
+  }
+</style>
+
+<script is:inline>
+  const input = document.getElementById('search')
+  const searchBtn = document.getElementById('searchBtn')
+  const fetchUrl = searchBtn.getAttribute("data-fetch-url")
+  const instructionsContainer = document.getElementById("instructions")
+  const resultsContainer = document.getElementById('result-area');
+  let movies = [];
+
+  fetch(fetchUrl)
+    .then(res => res.json())
+    .then(data => {
+      movies = data;
+    });
+
+  searchBtn.addEventListener('click', () => {
+    const query = input.value.toLowerCase();
+    const filteredMovies = movies.filter(movie =>
+      movie.title.toLowerCase().includes(query)
+    );
+
+    instructionsContainer.setAttribute("hidden", true)
+    resultsContainer.removeAttribute("hidden")
+    if (filteredMovies.length === 0) {
+      resultsContainer.innerHTML = `
+        <div class="flex justify-center items-center w-full p-8">
+          <p class="bg-title text-xl text-center">No se ha encontrado ninguna película coincidente con su búsqueda.</p>
+        </div>`
+      return
+    }
+
+    resultsContainer.innerHTML = ""
+    resultsContainer.innerHTML += filteredMovies.map(movie => `
+
+      <article
+        class="bg-secondary rounded p-primary flex flex-col gap-primary"
+        aria-label=Película: ${movie.title}
+      >
+        <img
+          src=${movie.img}
+          loading="lazy"
+          decoding="async"
+          alt=Descargar ${movie.title} en español latino (${movie.year})}
+          class="h-80 w-full object-cover rounded"
+        />
+      
+        <h2 class="text-title text-center text-lg h-8 font-bold overflow-hidden">
+          ${movie.title}
+        </h2>
+      
+        <p class="text-center">Idioma: Español</p>
+      
+        <a
+          href=${movie.url}
+          class="bg-btn text-title text-center font-extrabold rounded p-primary"
+          aria-label=Ver más detalles y descargar ${movie.title}
+        >
+          Descargar
+        </a>
+      </article>
+    `).join('');
+  });
+</script>
+
